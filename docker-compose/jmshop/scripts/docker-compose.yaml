@@ -1,0 +1,16 @@
+version: '3.9'
+services:
+  jmshop_mariadb:
+    container_name: jmshop_mariadb
+    image: mariadb:latest
+    restart: unless-stopped
+    ports:
+      - 3306:3306
+    volumes:
+      - ../mariadb/data/:/var/lib/mysql
+    environment:
+      MARIADB_USER: junmokang
+      MARIADB_PASSWORD: wnsah12
+      MARIADB_ROOT_PASSWORD: wnsah12
+      MARIADB_DATABASE: jmshop_mariadb
+

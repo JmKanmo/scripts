@@ -1,0 +1,15 @@
+version: '3.9'
+services:
+  db:
+    image: postgres:latest
+    container_name: jmservice_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: junmokang
+      POSTGRES_PASSWORD: wnsah12
+
+    volumes:
+      - ../pg/data/:/var/lib/postgresql/data
+
+    ports:
+      - 5432:5432
