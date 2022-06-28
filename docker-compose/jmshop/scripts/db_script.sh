@@ -1,12 +1,10 @@
 create table product (
   product_id bigint auto_increment primary key, 
   name varchar(128) not null, 
-  description mediumtext not null,
-  tag varchar(50),  
+  description mediumtext not null,  
   price bigint,
   shipping_fee int, 
   discount int,
-  static_file_uuid text, 
   created_date datetime not null,
   modified_date datetime not null,
   seller_id bigint,
@@ -17,6 +15,18 @@ create table product (
   FOREIGN KEY(delivery_id) REFERENCES delivery(delivery_id)
 );   
  
+create table product_image(
+  id bigint auto_increment primary key,
+  uuid varchar(128) not null,
+  product_id bigint,
+  FOREIGN KEY(product_id) REFERENCES product(product_id)
+);
+
+create table banner_image(
+  id bigint auto_increment primary key,
+  created_date datetime not null,
+  expiration_date datetime not null
+);
 
 create table category (
 	category_id bigint auto_increment primary key, 
