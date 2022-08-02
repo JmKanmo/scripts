@@ -1,0 +1,28 @@
+version: '3.9'
+services:
+  jmblog_mariadb:
+    container_name: jmblog_mariadb
+    image: mariadb:latest
+    restart: unless-stopped
+    ports:
+      - 3303:3306
+    volumes:
+      - ./mariadb/data/:/var/lib/mysql
+    environment:
+      MARIADB_USER: junmokang
+      MARIADB_PASSWORD: wnsah12
+      MARIADB_ROOT_PASSWORD: wnsah12
+      MARIADB_DATABASE: jmblog_mariadb
+  
+  jmshop_redis:
+    image: redis:latest
+    ports:
+      - 6379:6379
+    restart: unless-stopped
+    container_name: jmblog_redis
+    command: redis-server /usr/local/conf/redis.conf
+    hostname: jmblog_redis 
+    volumes:
+      - ./redis/data/:/data
+      - ./redis/redis.conf:/usr/local/conf/redis.conf
+
