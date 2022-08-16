@@ -6,7 +6,7 @@ services:
       dockerfile: master/Dockerfile
     restart: always
     environment:
-      MYSQL_DATABASE: mariadb_test_master_db
+      MYSQL_DATABASE: jmblog_mariadb
       MYSQL_USER: junmokang
       MYSQL_PASSWORD: wnsah12
       MYSQL_ROOT_PASSWORD: wnsah12
@@ -25,7 +25,7 @@ services:
       dockerfile: slave/Dockerfile
     restart: always
     environment:
-      MYSQL_DATABASE: mariadb_test_slave_db
+      MYSQL_DATABASE: jmblog_mariadb
       MYSQL_USER: junmokang
       MYSQL_PASSWORD: wnsah12
       MYSQL_ROOT_PASSWORD: wnsah12
