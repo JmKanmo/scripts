@@ -1,0 +1,43 @@
+version: "3"
+services:
+  db-master:
+    build: 
+      context: ./
+      dockerfile: master/Dockerfile
+    restart: always
+    environment:
+      MYSQL_DATABASE: mariadb_test_master_db
+      MYSQL_USER: junmokang
+      MYSQL_PASSWORD: wnsah12
+      MYSQL_ROOT_PASSWORD: wnsah12
+    ports:
+      - 3500:3306
+    # Where our data will be persisted
+    volumes:
+      - ./master/mariadb/data/:/var/lib/mysql
+      - ./master/mariadb-files/:/var/lib/mysql-files
+    networks:
+      - net-mysql
+  
+  db-slave:
+    build: 
+      context: ./
+      dockerfile: slave/Dockerfile
+    restart: always
+    environment:
+      MYSQL_DATABASE: mariadb_test_slave_db
+      MYSQL_USER: junmokang
+      MYSQL_PASSWORD: wnsah12
+      MYSQL_ROOT_PASSWORD: wnsah12
+    ports:
+      - 3501:3306
+    # Where our data will be persisted
+    volumes:
+      - ./slave/mariadb/data/:/var/lib/mysql
+      - ./slave/mariadb-files/:/var/lib/mysql-files
+    networks:
+      - net-mysql
+  
+networks: 
+  net-mysql:
+    driver: bridge
