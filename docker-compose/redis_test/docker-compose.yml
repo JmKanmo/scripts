@@ -1,53 +1,7 @@
 version: '3.9'
-services:      
-  jmblog_mariadb_master:
-    build: 
-      context: ./
-      dockerfile: mariadb/master/Dockerfile
-    restart: unless-stopped
-    environment:
-      MARIADB_USER: junmokang
-      MARIADB_PASSWORD: wnsah12
-      MARIADB_ROOT_PASSWORD: wnsah12
-      MARIADB_DATABASE: jmblog_mariadb
-    ports:
-      - 3310:3306
-    # Where our data will be persisted
-    volumes:
-      - ./mariadb/master/data/:/var/lib/mysql
-    networks:
-      - net-mysql
-  
-  jmblog_mariadb_slave:
-    build: 
-      context: ./
-      dockerfile: mariadb/slave/Dockerfile
-    restart: unless-stopped
-    environment:
-      MARIADB_USER: junmokang
-      MARIADB_PASSWORD: wnsah12
-      MARIADB_ROOT_PASSWORD: wnsah12
-      MARIADB_DATABASE: jmblog_mariadb
-    ports:
-      - 3311:3306
-    # Where our data will be persisted
-    volumes:
-      - ./mariadb/slave/data/:/var/lib/mysql
-    networks:
-      - net-mysql
 
-  redis-stat:
-    image: insready/redis-stat:latest
-    ports:
-      - 8479:63790
-    restart: unless-stopped
-    container_name: redis-master
-    links:
-      - redis-master:redis-master
-    command: --server redis-master
-    depends_on:
-      - redis-master
-
+services:
+  # master : bitnami/redis:6.2.6
   redis-master:
     hostname: redis-master
     container_name: redis-master
@@ -178,8 +132,3 @@ services:
       - 26381:26379
     volumes:
       - ./sentinel3/backup:/freelog/backup
-
-  
-networks: 
-  net-mysql:
-    driver: bridge
