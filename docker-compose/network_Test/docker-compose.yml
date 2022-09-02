@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+  db:
+    image: mariadb:latest
+    container_name: db
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - TZ=Asia/Seoul
+    volumes:
+      - ./data/dbdata:/var/lib/mysql
+      - ./db:/docker-entrypoint-initdb.d
+    networks:
+      default_bridge:
+        ipv4_address: 172.26.0.10
+
+  # nginx:
+  #   depends_on:
+  #     - php
+  #   image: nginx:alpine
+  #   container_name: nginx
+  #   environment:
+  #     - TZ=Asia/Seoul
+  #   restart: unless-stopped
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./site:/var/www/html
+  #     - ./nginx/conf.d:/etc/nginx/conf.d
+  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+  #     - ./nginx/logs:/var/log/nginx/
+  #     - /etc/localtime:/etc/localtime:ro
+  #     - ./ssl:/ssl
+  #   networks:
+  #     default_bridge:
+  #       ipv4_address: 172.26.0.13
+
+networks:
+  default_bridge:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.26.0.0/16

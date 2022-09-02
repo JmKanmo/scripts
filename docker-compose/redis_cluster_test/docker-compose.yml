@@ -1,98 +1,112 @@
-version: '3'
-services:
-  redis-master-1:
-    container_name: redis-master-1
-    image: redis:6.2.3
-    network_mode: "host"
-    command: redis-server /etc/redis.conf
-    volumes:
-    - ./redis-master-1.conf:/etc/redis.conf
-    restart: always
-    networks: 
-      broker-net: 
-        ipv4_address: 11.18.1.1
+version: '3.9'
+services:      
+  temp-redis-master:
+    hostname: temp-redis-master
+    container_name: temp-redis-master
+    image: bitnami/redis:6.2.6
+    environment:
+      - REDIS_REPLICATION_MODE=master
+      - REDIS_MASTER_HOST=redis-master
+      - ALLOW_EMPTY_PASSWORD=yes
+    
+    network_mode: host 
+
     ports:
-    - 7001:7001
-    - 17001:17001
+      - 6974:6379
 
-  redis-master-2:
-    container_name: redis-master-2
-    image: redis:6.2.3
-    network_mode: "host"
-    command: redis-server /etc/redis.conf
-    volumes:
-      - ./redis-master-2.conf:/etc/redis.conf
-    restart: always
-    networks: 
-      broker-net: 
-        ipv4_address: 11.18.2.2
+  # slave1 : bitnami/redis:6.2.6
+  temp-redis-slave-1:
+    hostname: temp-redis-slave-1
+    container_name: temp-redis-slave-1
+    image: bitnami/redis:6.2.6
+    environment:
+      - REDIS_REPLICATION_MODE=slave
+      - REDIS_MASTER_HOST=temp-redis-master
+      - ALLOW_EMPTY_PASSWORD=yes
     ports:
-      - 7002:7002
-      - 17002:17002
+      - 6975:6379
+    network_mode: host 
+    depends_on:
+      - temp-redis-master
 
-  redis-master-3:
-    container_name: redis-master-3
-    image: redis:6.2.3
-    network_mode: "host"
-    command: redis-server /etc/redis.conf
-    volumes:
-    - ./redis-master-3.conf:/etc/redis.conf
-    restart: always
-    networks: 
-      broker-net: 
-        ipv4_address: 11.18.3.3
+  # slave2 : bitnami/redis:6.2.6
+  temp-redis-slave-2:
+    hostname: temp-redis-slave-2
+    container_name: temp-redis-slave-2
+    image: bitnami/redis:6.2.6
+    environment:
+      - REDIS_REPLICATION_MODE=slave
+      - REDIS_MASTER_HOST=temp-redis-master
+      - ALLOW_EMPTY_PASSWORD=yes
     ports:
-    - 7003:7003
-    - 17003:17003
+      - 6976:6379
+    network_mode: host 
+    depends_on:
+      - temp-redis-master
+      - temp-redis-slave-1
 
-  redis-slave-1:
-    container_name: redis-slave-1
-    image: redis:6.2.3
-    network_mode: "host"
-    command: redis-server /etc/redis.conf
-    volumes:
-    - ./redis-slave-1.conf:/etc/redis.conf
-    restart: always
-    networks: 
-      broker-net: 
-        ipv4_address: 11.18.4.4
+
+  # sentinel1 : bitnami/redis-sentinel:6.2.6
+  temp-redis-sentinel-1:
+    hostname: temp-redis-sentinel-1
+    container_name: temp-redis-sentinel-1
+    image: bitnami/redis-sentinel:6.2.6
+    environment:
+      - REDIS_SENTINEL_DOWN_AFTER_MILLISECONDS=3000
+      - REDIS_SENTINEL_FAILOVER_TIMEOUT=60000
+      - REDIS_MASTER_HOST=temp-redis-master
+      - REDIS_MASTER_PORT_NUMBER=6379
+      - REDIS_MASTER_SET=temp-master-name
+      - REDIS_SENTINEL_QUORUM=2
+      # - REDIS_SENTINEL_PASSWORD=170anwkd!
+    depends_on:
+      - temp-redis-master
+      - temp-redis-slave-1
+      - temp-redis-slave-2
+      - temp-redis-slave-3
     ports:
-    - 7004:7004
-    - 17004:17004
+      - 28575:26379
+    network_mode: host 
 
-  redis-slave-2:
-    container_name: redis-slave-2
-    image: redis:6.2.3
-    network_mode: "host"
-    command: redis-server /etc/redis.conf
-    volumes:
-      - ./redis-slave-2.conf:/etc/redis.conf
-    restart: always
-    networks: 
-      broker-net: 
-        ipv4_address: 11.18.5.5
+  temp-redis-sentinel-2:
+    hostname: temp-redis-sentinel-2
+    container_name: temp-redis-sentinel-2
+    image: bitnami/redis-sentinel:6.2.6
+    environment:
+      - REDIS_SENTINEL_DOWN_AFTER_MILLISECONDS=3000
+      - REDIS_SENTINEL_FAILOVER_TIMEOUT=60000
+      - REDIS_MASTER_HOST=temp-redis-master
+      - REDIS_MASTER_PORT_NUMBER=6379
+      - REDIS_MASTER_SET=temp-master-name
+      - REDIS_SENTINEL_QUORUM=2
+      # - REDIS_SENTINEL_PASSWORD=170anwkd!
+    depends_on:
+      - temp-redis-master
+      - temp-redis-slave-1
+      - temp-redis-slave-2
+      - temp-redis-slave-3
+    network_mode: host 
     ports:
-      - 7005:7005
-      - 17005:17005
+      - 28576:26379
 
-  redis-slave-3:
-    container_name: redis-slave-3
-    image: redis:6.2.3
-    network_mode: "host"
-    command: redis-server /etc/redis.conf
-    volumes:
-    - ./redis-slave-3.conf:/etc/redis.conf
-    restart: always
-    networks: 
-      broker-net: 
-        ipv4_address: 11.18.6.6
+  # sentinel3 : bitnami/redis-sentinel:6.2.6
+  temp-redis-sentinel-3:
+    hostname: temp-redis-sentinel-3
+    container_name: temp-redis-sentinel-3
+    image: bitnami/redis-sentinel:6.2.6
+    environment:
+      - REDIS_SENTINEL_DOWN_AFTER_MILLISECONDS=3000
+      - REDIS_SENTINEL_FAILOVER_TIMEOUT=60000
+      - REDIS_MASTER_HOST=temp-redis-master
+      - REDIS_MASTER_PORT_NUMBER=6379
+      - REDIS_MASTER_SET=temp-master-name
+      - REDIS_SENTINEL_QUORUM=2
+      # - REDIS_SENTINEL_PASSWORD=170anwkd!
+    depends_on:
+      - temp-redis-master
+      - temp-redis-slave-1
+      - temp-redis-slave-2
+      - temp-redis-slave-3
     ports:
-    - 7006:7006
-    - 17006:17006
-
-networks: 
-  broker-net: 
-    external: 
-      name: broker 
-
-
+      - 28577:26379
+    network_mode: host 

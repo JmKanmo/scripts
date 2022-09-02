@@ -16,7 +16,8 @@ services:
     volumes:
       - ./mariadb/master/data/:/var/lib/mysql
     networks:
-      - net-mysql
+      net-mysql:
+        ipv4_address: 172.26.0.10
   
   jmblog_mariadb_slave:
     build: 
@@ -34,19 +35,20 @@ services:
     volumes:
       - ./mariadb/slave/data/:/var/lib/mysql
     networks:
-      - net-mysql
+      net-mysql:
+        ipv4_address: 172.26.0.11
 
-  redis-stat:
-    image: insready/redis-stat:latest
-    ports:
-      - 8479:63790
-    restart: unless-stopped
-    container_name: redis-master
-    links:
-      - redis-master:redis-master
-    command: --server redis-master
-    depends_on:
-      - redis-master
+  # redis-stat:
+  #   image: insready/redis-stat:latest
+  #   ports:
+  #     - 8479:63790
+  #   restart: unless-stopped
+  #   container_name: redis-master
+  #   links:
+  #     - redis-master:redis-master
+  #   command: --server redis-master
+  #   depends_on:
+  #     - redis-master
 
   redis-master:
     hostname: redis-master
@@ -54,9 +56,11 @@ services:
     image: bitnami/redis:6.2.6
     environment:
       - REDIS_REPLICATION_MODE=master
+      - REDIS_MASTER_HOST=redis-master
       - ALLOW_EMPTY_PASSWORD=yes
     volumes:
       - ./master/backup:/freelog/backup
+    
     networks:
       - net-redis
     ports:
@@ -196,6 +200,9 @@ services:
   
 networks: 
   net-mysql:
-    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.26.0.0/16
   net-redis:
     driver: bridge

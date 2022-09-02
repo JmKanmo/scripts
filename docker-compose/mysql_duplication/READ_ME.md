@@ -35,7 +35,7 @@ https://huisam.tistory.com/entry/mysql-replication?category=689280
 
 $ mysql -u root -p 
 
-$ mysql> CHANGE MASTER TO MASTER_HOST='172.25.0.3', MASTER_USER='root', MASTER_PASSWORD='wnsah12', MASTER_LOG_FILE='mysql-bin.000004', MASTER_LOG_POS=0, GET_MASTER_PUBLIC_KEY=1;
+$ mysql> CHANGE MASTER TO MASTER_HOST='172.26.0.10', MASTER_USER='root', MASTER_PASSWORD='wnsah12', MASTER_LOG_FILE='mysql-bin.000009', MASTER_LOG_POS=0, GET_MASTER_PUBLIC_KEY=1;
 MASTER_HOST, MASTER_USER, MASTER_PASSWORD, MASTER_LOG_FILE <- 이 변수들은 적절히 찾아서 입력할 것. MASTER_LOG_FILE은 위에 master에서 show master status; 입력햇을 때, FILE 명을 입력해준다. 
 
 $ mysql> start slave; 
