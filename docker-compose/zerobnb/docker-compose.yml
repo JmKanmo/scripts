@@ -1,0 +1,45 @@
+# Use root/example as user/password credentials
+version: '3.9'
+
+services:
+  zerobnb_mysql:
+    image: mysql:latest
+    container_name: zerobnb_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_USER: zerobnb
+      MYSQL_PASSWORD: zerobnb
+      MYSQL_ROOT_PASSWORD: zerobnb
+      MYSQL_DATABASE: zerobnb_mysql
+    ports:
+      - 3395:3306
+    volumes:
+      - ./mysql/data/:/var/lib/mysql
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+  
+  zerobnb_redis:
+    image: redis:latest
+    ports:
+      - 6500:6379
+    restart: unless-stopped
+    container_name: zerobnb_redis
+    command: redis-server /usr/local/conf/redis.conf
+    hostname: zerobnb_redis 
+    volumes:
+      - ./redis/data/:/data
+      - ./redis/redis.conf:/usr/local/conf/redis.conf
+
+  zerobnb_redis_stat:
+    image: insready/redis-stat:latest
+    ports:
+      - 8479:63790
+    restart: unless-stopped
+    container_name: zerobnb_redis_stat
+    links:
+      - zerobnb_redis:zerobnb_redis
+    command: --server zerobnb_redis
+    depends_on:
+      - zerobnb_redis
+  
