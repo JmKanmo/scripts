@@ -1,0 +1,10 @@
+version: '3'
+services:
+  nginx_service:
+    image: nginx
+    ports:
+      - "80:80"
+    volumes:
+       - ${PWD}/conf/nginx:/etc/nginx/conf.d
+
+    container_name: zerobnb-nginx-proxy
